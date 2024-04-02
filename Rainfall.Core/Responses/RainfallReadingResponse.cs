@@ -3,10 +3,10 @@
 /// <summary>
 /// Rainfall reading response
 /// </summary>
-public class GetRainfallResponse
+public class RainfallReadingResponse
 {
     public List<RainfallReading> Readings { get; set; }
-    public GetRainfallResponse(List<RainfallReading> readings)
+    public RainfallReadingResponse(List<RainfallReading> readings)
     {
         Readings = readings;
     }

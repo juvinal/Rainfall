@@ -20,18 +20,18 @@ public class RainfallController : ControllerBase
     /// <param name="stationId">The id of the reading station</param>
     /// <param name="count">The number of readings to return</param>
     /// <returns></returns>
-    [ProducesResponseType(typeof(GetRainfallResponse), 200)]
-    [ProducesResponseType(typeof(ErrorResponse), 400)]
-    [ProducesResponseType(typeof(ErrorResponse), 404)]
-    [ProducesResponseType(typeof(ErrorResponse), 500)]
+    [ProducesResponseType(typeof(RainfallReadingResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
     [EndpointSummary("Get rainfall readings by station Id")]
     [EndpointDescription("Retrieve the latest readings for the specified stationId")]
-    [HttpGet("id/{stationId}/readings", Name = "GetAsset")]
-    public async Task<ActionResult<GetRainfallResponse>> Get([FromRoute] string stationId, [FromQuery] int count = 10)
+    [HttpGet("id/{stationId}/readings", Name = "get-rainfall")]
+    public async Task<RainfallReadingResponse> Get([FromRoute] string stationId, [FromQuery] int count = 10)
     {
         var message = new GetRainfall(stationId, count);
         var result = await _mediator.Send(message);
 
-        return this.ToActionResult(result);
+        return result;
     }
 }

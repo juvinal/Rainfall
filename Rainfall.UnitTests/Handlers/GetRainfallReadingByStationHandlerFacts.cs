@@ -1,5 +1,5 @@
-﻿using Ardalis.Result;
-using Moq;
+﻿using Moq;
+using Rainfall.Core.Exceptions;
 using Rainfall.Core.Requests;
 using Rainfall.ReportService;
 using Rainfall.ReportService.Models;
@@ -41,8 +41,7 @@ public class GetRainfallHandlerFacts
         var actual = await target.Handle(message, CancellationToken.None);
 
         //Assert
-        Assert.True(actual.IsSuccess);
-        Assert.NotEmpty(actual.Value.Readings);
+        Assert.NotEmpty(actual.Readings);
     }
 
     [Fact]
@@ -52,26 +51,10 @@ public class GetRainfallHandlerFacts
         var message = new GetRainfall("456", 10);
         var target = new GetRainfallHandler(_serviceMock.Object);
 
-        //Act
-        var actual = await target.Handle(message, CancellationToken.None);
-
-        //Assert
-        Assert.False(actual.IsSuccess);
-        Assert.Equal(actual.Status, ResultStatus.NotFound);
-    }
-
-    [Fact]
-    public async Task Handle_Invalid_Station_Id_Returns_Invalid()
-    {
-        //Arrange
-        var message = new GetRainfall(" ", 0);
-        var target = new GetRainfallHandler(_serviceMock.Object);
-
-        //Act
-        var actual = await target.Handle(message, CancellationToken.None);
-
-        //Assert
-        Assert.False(actual.IsSuccess);
-        Assert.Equal(ResultStatus.Invalid, actual.Status);
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(async () =>
+        {
+            await target.Handle(message, CancellationToken.None);
+        });
     }
 }

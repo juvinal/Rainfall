@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Rainfall.Core\Rainfall.Core.csproj" />
+    <ProjectReference Include="..\Rainfall.Infrastructure\Rainfall.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

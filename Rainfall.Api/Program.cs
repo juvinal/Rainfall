@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Rainfall.Api.Extensions;
-using Rainfall.Api.Middlewares;
 using Rainfall.Core;
+using Rainfall.Infrastructure;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddApplication();
 builder.Services.AddSwaggerGen(opt =>
 {
     opt.SwaggerDoc("v1", new OpenApiInfo
@@ -27,10 +29,6 @@ builder.Services.AddSwaggerGen(opt =>
     opt.AddServer(new OpenApiServer { Url = "https://localhost:3000/", Description = "Rainfall Api" });
 });
 builder.Services.AddRainfallReportService(builder.Configuration);
-builder.Services.AddMediatR(opt => opt.RegisterServicesFromAssemblies(
-    typeof(DomainMarker).Assembly,
-    typeof(Program).Assembly
-    ));
 builder.Services.AddMemoryCache();
 builder.Services.AddRouting(opt => opt.LowercaseUrls = true);
 
@@ -58,13 +56,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseInfrastructure(builder.Configuration);
+
 app.UseRouting();
 
 app.UseHttpsRedirection();
 
 app.UseHsts();
-
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseAuthorization();
 
